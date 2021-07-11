@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Pomodoro</string>
+    <string name="button_add_stopwatch">Add Stopwatch</string>
+    <string name="textview_stopwatch_timer_text">00:00:00:00</string>
 </resources>

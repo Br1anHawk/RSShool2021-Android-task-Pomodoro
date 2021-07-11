@@ -6,22 +6,23 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.example.rsshool.databinding.StopwatchItemBinding
 
-class StopWatchAdapter: ListAdapter<StopWatch, StopwatchViewHolder>(itemComparator) {
+class StopWatchAdapter(
+    private val listener: StopWatchListener
+): ListAdapter<StopWatch, StopWatchViewHolder>(itemComparator) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StopwatchViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StopWatchViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding = StopwatchItemBinding.inflate(layoutInflater, parent, false)
-        return StopwatchViewHolder(binding)
+        return StopWatchViewHolder(binding, listener, binding.root.resources)
     }
 
-    override fun onBindViewHolder(holder: StopwatchViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: StopWatchViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
     private companion object {
 
         private val itemComparator = object : DiffUtil.ItemCallback<StopWatch>() {
-
             override fun areItemsTheSame(oldItem: StopWatch, newItem: StopWatch): Boolean {
                 return oldItem.id == newItem.id
             }
@@ -30,6 +31,8 @@ class StopWatchAdapter: ListAdapter<StopWatch, StopwatchViewHolder>(itemComparat
                 return oldItem.currentMs == newItem.currentMs &&
                         oldItem.isStarted == newItem.isStarted
             }
+
+            override fun getChangePayload(oldItem: StopWatch, newItem: StopWatch): Any = Any()
         }
     }
 }

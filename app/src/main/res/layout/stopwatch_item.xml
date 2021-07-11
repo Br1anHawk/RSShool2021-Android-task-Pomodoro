@@ -24,11 +24,11 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/stopwatch_timer"
+            android:id="@+id/stopWatch_timer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:text="00:00:00:00"
+            android:text="@string/textview_stopwatch_timer_text"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/blinking_indicator"
