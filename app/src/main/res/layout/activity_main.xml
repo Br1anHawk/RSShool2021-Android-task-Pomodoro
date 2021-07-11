@@ -38,7 +38,8 @@
             android:id="@+id/timer_minutes_input_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/input_text_minutes_hint" />
+            android:hint="@string/input_text_minutes_hint"
+            android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

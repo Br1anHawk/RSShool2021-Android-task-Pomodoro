@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity(), TimerListener {
     private val binding get() = _binding!!
 
     private val timerAdapter = TimerAdapter(this)
-    private val timer = mutableListOf<Timer>()
+    private val timers = mutableListOf<Timer>()
     private var nextId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,40 +28,46 @@ class MainActivity : AppCompatActivity(), TimerListener {
             val timerTimeText = binding.timerMinutesInputText.text.toString()
             if (timerTimeText.isNotEmpty()) {
                 val timerTime = timerTimeText.toLong() * 60 * 1000
-                timer.add(Timer(nextId++, timerTime, false, timerTime))
-                timerAdapter.submitList(timer.toList())
+                timers.add(Timer(nextId++, timerTime, false, timerTime))
+                timerAdapter.submitList(timers.toList())
+                timerAdapter.notifyItemInserted(timers.size - 1)
             }
         }
     }
 
     override fun start(id: Int) {
+        timers.forEach { if (it.isStarted) it.isStarted = false}
+        timerAdapter.notifyDataSetChanged()
+        //timerAdapter.submitList(timers.toList())
         changeTimer(id, null, true)
+        timerAdapter.notifyDataSetChanged()
     }
 
-    override fun stop(id: Int, currentMs: Long) {
+    override fun stop(id: Int, currentMs: Long, adapterPosition: Int) {
         changeTimer(id, currentMs, false)
+        timerAdapter.notifyItemChanged(adapterPosition)
     }
 
-    override fun reset(id: Int, initMs: Long) {
+    override fun reset(id: Int, initMs: Long, adapterPosition: Int) {
         changeTimer(id, initMs, false)
+        timerAdapter.notifyItemChanged(adapterPosition)
     }
 
-    override fun delete(id: Int) {
-        timer.remove(timer.find { it.id == id })
-        timerAdapter.submitList(timer.toList())
+    override fun delete(id: Int, adapterPosition: Int) {
+        timers.remove(timers.find { it.id == id })
+        timerAdapter.submitList(timers.toList())
+        //timerAdapter.notifyItemRemoved(adapterPosition)
+        timerAdapter.notifyDataSetChanged()
     }
 
     private fun changeTimer(id: Int, currentMs: Long?, isStarted: Boolean) {
-        val newTimers = mutableListOf<Timer>()
-        timer.forEach {
-            if (it.id == id) {
-                newTimers.add(Timer(it.id, currentMs ?: it.currentMs, isStarted, it.initMs))
-            } else {
-                newTimers.add(it)
+        timers
+            .find { it.id == id }
+            ?.let {
+                it.currentMs = currentMs ?: it.currentMs
+                it.isStarted = isStarted
             }
-        }
-        timerAdapter.submitList(newTimers)
-        timer.clear()
-        timer.addAll(newTimers)
+        //timerAdapter.submitList(timers)
+        //timerAdapter.notifyDataSetChanged()
     }
 }

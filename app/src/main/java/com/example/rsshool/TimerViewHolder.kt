@@ -1,5 +1,6 @@
 package com.example.rsshool
 
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
@@ -13,7 +14,7 @@ class TimerViewHolder(
     private val resources: Resources
 ): RecyclerView.ViewHolder(binding.root) {
 
-    private var timer: CountDownTimer? = null
+    private var timerClock: CountDownTimer? = null
 
     fun bind(timer: Timer) {
         binding.timerDisplayTextview.text = timer.currentMs.displayTime()
@@ -28,23 +29,24 @@ class TimerViewHolder(
     private fun initButtonsListeners(timer: Timer) {
         binding.startStopTimerButton.setOnClickListener {
             if (timer.isStarted) {
-                listener.stop(timer.id, timer.currentMs)
+                listener.stop(timer.id, timer.currentMs, adapterPosition)
             } else {
                 listener.start(timer.id)
             }
         }
 
-        binding.restartButton.setOnClickListener { listener.reset(timer.id, timer.initMs) }
+        binding.restartButton.setOnClickListener { listener.reset(timer.id, timer.initMs, adapterPosition) }
 
-        binding.deleteButton.setOnClickListener { listener.delete(timer.id) }
+        binding.deleteButton.setOnClickListener { listener.delete(timer.id, adapterPosition) }
     }
 
     private fun startTimer(timer: Timer) {
+        binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.white)))
         binding.startStopTimerButton.text = resources.getString(R.string.button_timer_stop_text)
 
-        this.timer?.cancel()
-        this.timer = getCountDownTimer(timer)
-        this.timer?.start()
+        this.timerClock?.cancel()
+        this.timerClock = getCountDownTimer(timer)
+        this.timerClock?.start()
 
         binding.blinkingIndicator.isInvisible = false
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
@@ -53,15 +55,15 @@ class TimerViewHolder(
     private fun stopTimer(timer: Timer) {
         binding.startStopTimerButton.text = resources.getString(R.string.button_timer_start_text)
 
-        this.timer?.cancel()
+        this.timerClock?.cancel()
 
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
     }
 
     private fun getCountDownTimer(timer: Timer): CountDownTimer {
-        return object : CountDownTimer(PERIOD, UNIT_TEN_MS) {
-            val interval = UNIT_TEN_MS
+        return object : CountDownTimer(timer.initMs, UNIT_ONE_SECOND) {
+            val interval = UNIT_ONE_SECOND
 
             override fun onTick(millisUntilFinished: Long) {
                 timer.currentMs -= interval
@@ -69,7 +71,11 @@ class TimerViewHolder(
             }
 
             override fun onFinish() {
-                binding.timerDisplayTextview.text = timer.currentMs.displayTime()
+                binding.timerDisplayTextview.text = timer.initMs.displayTime()
+                timer.isStarted = false
+                timer.currentMs = timer.initMs
+                stopTimer(timer)
+                binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.stop_timer_notification_color)))
             }
         }
     }
@@ -81,7 +87,6 @@ class TimerViewHolder(
         val h = this / 1000 / 3600
         val m = this / 1000 % 3600 / 60
         val s = this / 1000 % 60
-        //val ms = this % 1000 / 10
 
         return "${displaySlot(h)}:${displaySlot(m)}:${displaySlot(s)}"
     }
@@ -96,7 +101,7 @@ class TimerViewHolder(
 
     private companion object {
         private const val START_TIME = "00:00:00"
-        private const val UNIT_TEN_MS = 1000L
-        private const val PERIOD  = 1000L * 60L * 60L * 24L // Day
+        private const val UNIT_TEN_MS = 10L
+        private const val UNIT_ONE_SECOND = 10L
     }
 }
