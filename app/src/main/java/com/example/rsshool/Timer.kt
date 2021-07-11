@@ -1,7 +1,8 @@
 package com.example.rsshool
 
-data class StopWatch(
+data class Timer(
     val id: Int,
     var currentMs: Long,
-    var isStarted: Boolean
+    var isStarted: Boolean,
+    val initMs: Long
 )

@@ -5,13 +5,13 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), StopWatchListener {
+class MainActivity : AppCompatActivity(), TimerListener {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
 
-    private val stopWatchAdapter = StopWatchAdapter(this)
-    private val stopWatches = mutableListOf<StopWatch>()
+    private val timerAdapter = TimerAdapter(this)
+    private val timer = mutableListOf<Timer>()
     private var nextId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,43 +21,47 @@ class MainActivity : AppCompatActivity(), StopWatchListener {
 
         binding.recycler.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = stopWatchAdapter
+            adapter = timerAdapter
         }
 
-        binding.addNewStopwatchButton.setOnClickListener {
-            stopWatches.add(StopWatch(nextId++, 0, true))
-            stopWatchAdapter.submitList(stopWatches.toList())
+        binding.addNewTimerButton.setOnClickListener {
+            val timerTimeText = binding.timerMinutesInputText.text.toString()
+            if (timerTimeText.isNotEmpty()) {
+                val timerTime = timerTimeText.toLong() * 60 * 1000
+                timer.add(Timer(nextId++, timerTime, false, timerTime))
+                timerAdapter.submitList(timer.toList())
+            }
         }
     }
 
     override fun start(id: Int) {
-        changeStopwatch(id, null, true)
+        changeTimer(id, null, true)
     }
 
     override fun stop(id: Int, currentMs: Long) {
-        changeStopwatch(id, currentMs, false)
+        changeTimer(id, currentMs, false)
     }
 
-    override fun reset(id: Int) {
-        changeStopwatch(id, 0L, false)
+    override fun reset(id: Int, initMs: Long) {
+        changeTimer(id, initMs, false)
     }
 
     override fun delete(id: Int) {
-        stopWatches.remove(stopWatches.find { it.id == id })
-        stopWatchAdapter.submitList(stopWatches.toList())
+        timer.remove(timer.find { it.id == id })
+        timerAdapter.submitList(timer.toList())
     }
 
-    private fun changeStopwatch(id: Int, currentMs: Long?, isStarted: Boolean) {
-        val newTimers = mutableListOf<StopWatch>()
-        stopWatches.forEach {
+    private fun changeTimer(id: Int, currentMs: Long?, isStarted: Boolean) {
+        val newTimers = mutableListOf<Timer>()
+        timer.forEach {
             if (it.id == id) {
-                newTimers.add(StopWatch(it.id, currentMs ?: it.currentMs, isStarted))
+                newTimers.add(Timer(it.id, currentMs ?: it.currentMs, isStarted, it.initMs))
             } else {
                 newTimers.add(it)
             }
         }
-        stopWatchAdapter.submitList(newTimers)
-        stopWatches.clear()
-        stopWatches.addAll(newTimers)
+        timerAdapter.submitList(newTimers)
+        timer.clear()
+        timer.addAll(newTimers)
     }
 }
