@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rsshool.databinding.TimerItemBinding
@@ -24,6 +25,12 @@ class TimerViewHolder(
             stopTimer(timer)
         }
         initButtonsListeners(timer)
+
+        binding.circleProgressBarView.apply {
+            //layoutParams = ViewGroup.LayoutParams(height, height)
+            setPeriod(timer.initMs)
+            setCurrent(timer.currentMs)
+        }
     }
 
     private fun initButtonsListeners(timer: Timer) {
@@ -35,9 +42,19 @@ class TimerViewHolder(
             }
         }
 
-        binding.restartButton.setOnClickListener { listener.reset(timer.id, timer.initMs, adapterPosition) }
+        binding.restartButton.setOnClickListener {
+            listener.reset(timer.id, timer.initMs, adapterPosition)
+            if (timer.isStarted) {
+                this.timerClock?.cancel()
+            }
+        }
 
-        binding.deleteButton.setOnClickListener { listener.delete(timer.id, adapterPosition) }
+        binding.deleteButton.setOnClickListener {
+            listener.delete(timer.id, adapterPosition)
+            if (timer.isStarted) {
+                this.timerClock?.cancel()
+            }
+        }
     }
 
     private fun startTimer(timer: Timer) {
@@ -66,11 +83,14 @@ class TimerViewHolder(
             val interval = UNIT_ONE_SECOND
 
             override fun onTick(millisUntilFinished: Long) {
+                Log.d("onTick_CountDownTimer", "${timer.currentMs}")
                 timer.currentMs -= interval
                 binding.timerDisplayTextview.text = timer.currentMs.displayTime()
+                binding.circleProgressBarView.setCurrent(timer.currentMs)
             }
 
             override fun onFinish() {
+                Log.d("onFinish_CountDownTimer", "${timer.currentMs}")
                 binding.timerDisplayTextview.text = timer.initMs.displayTime()
                 timer.isStarted = false
                 timer.currentMs = timer.initMs
@@ -102,6 +122,6 @@ class TimerViewHolder(
     private companion object {
         private const val START_TIME = "00:00:00"
         private const val UNIT_TEN_MS = 10L
-        private const val UNIT_ONE_SECOND = 10L
+        private const val UNIT_ONE_SECOND = 1000L
     }
 }

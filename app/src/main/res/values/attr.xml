@@ -1,0 +1,5 @@
+<resources>
+    <declare-styleable name="CircleProgressBarView">
+        <attr name="colorPrimary" format="color"/>
+    </declare-styleable>
+</resources>
