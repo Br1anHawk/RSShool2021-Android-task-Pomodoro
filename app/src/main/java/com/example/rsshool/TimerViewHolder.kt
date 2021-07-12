@@ -43,17 +43,17 @@ class TimerViewHolder(
         }
 
         binding.restartButton.setOnClickListener {
-            listener.reset(timer.id, timer.initMs, adapterPosition)
             if (timer.isStarted) {
                 this.timerClock?.cancel()
             }
+            listener.reset(timer.id, timer.initMs, adapterPosition)
         }
 
         binding.deleteButton.setOnClickListener {
-            listener.delete(timer.id, adapterPosition)
             if (timer.isStarted) {
                 this.timerClock?.cancel()
             }
+            listener.delete(timer.id, adapterPosition)
         }
     }
 
@@ -79,7 +79,7 @@ class TimerViewHolder(
     }
 
     private fun getCountDownTimer(timer: Timer): CountDownTimer {
-        return object : CountDownTimer(timer.initMs, UNIT_ONE_SECOND) {
+        return object : CountDownTimer(timer.currentMs, UNIT_ONE_SECOND) {
             val interval = UNIT_ONE_SECOND
 
             override fun onTick(millisUntilFinished: Long) {
