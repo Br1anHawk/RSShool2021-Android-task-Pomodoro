@@ -46,6 +46,7 @@ class TimerViewHolder(
             if (timer.isStarted) {
                 this.timerClock?.cancel()
             }
+            binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.white)))
             listener.reset(timer.id, timer.initMs, adapterPosition)
         }
 
