@@ -3,12 +3,10 @@ package com.example.rsshool
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool.databinding.ActivityMainBinding
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
@@ -45,6 +43,12 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+
+//        lifecycleScope.launch(Dispatchers.Main) {
+//            while (true) {
+//                delay(10L)
+//            }
+//        }
     }
 
     override fun start(id: Int) {
