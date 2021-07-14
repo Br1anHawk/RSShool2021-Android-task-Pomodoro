@@ -5,4 +5,5 @@
     <string name="button_timer_start_text">start</string>
     <string name="button_timer_stop_text">stop</string>
     <string name="input_text_minutes_hint">minutes</string>
+    <string name="input_text_seconds_hint">seconds</string>
 </resources>

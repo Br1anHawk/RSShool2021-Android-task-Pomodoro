@@ -26,20 +26,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="150dp"
+    <EditText
+        android:id="@+id/timer_minutes_input_text"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
+        android:layout_marginBottom="16dp"
+        android:ems="10"
+        android:hint="@string/input_text_minutes_hint"
+        android:inputType="number"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recycler">
+        app:layout_constraintTop_toBottomOf="@+id/recycler"
+        app:layout_constraintVertical_bias="1.0" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/timer_minutes_input_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/input_text_minutes_hint"
-            android:inputType="number" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <EditText
+        android:id="@+id/timer_seconds_input_text"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="16dp"
+        android:ems="10"
+        android:hint="@string/input_text_seconds_hint"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/timer_minutes_input_text"
+        app:layout_constraintTop_toBottomOf="@+id/recycler"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

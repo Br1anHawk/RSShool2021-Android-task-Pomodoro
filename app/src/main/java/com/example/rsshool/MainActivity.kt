@@ -25,21 +25,26 @@ class MainActivity : AppCompatActivity(), TimerListener {
         }
 
         binding.addNewTimerButton.setOnClickListener {
-            val timerTimeText = binding.timerMinutesInputText.text.toString()
-            if (timerTimeText.isNotEmpty()) {
-                val timerTime = timerTimeText.toLong() * 60 * 1000
-                timers.add(Timer(nextId++, timerTime, false, timerTime))
-                timerAdapter.submitList(timers.toList())
-                timerAdapter.notifyItemInserted(timers.size - 1)
+            var timerTimeInputMinutesText = binding.timerMinutesInputText.text.toString()
+            var timerTimeInputSecondsText = binding.timerSecondsInputText.text.toString()
+            if (timerTimeInputMinutesText.isEmpty()) {
+                timerTimeInputMinutesText = "0"
             }
+            if (timerTimeInputSecondsText.isEmpty()) {
+                timerTimeInputSecondsText = "0"
+            }
+            val timerTime = timerTimeInputMinutesText.toLong() * 60 * 1000 + timerTimeInputSecondsText.toLong() * 1000
+            timers.add(Timer(nextId++, timerTime, false, timerTime))
+            timerAdapter.submitList(timers.toList())
+            timerAdapter.notifyItemInserted(timers.size - 1)
         }
     }
 
     override fun start(id: Int) {
         timers.forEach { if (it.isStarted) it.isStarted = false}
-        timerAdapter.notifyDataSetChanged()
-        //timerAdapter.submitList(timers.toList())
+        //timerAdapter.notifyDataSetChanged()
         changeTimer(id, null, true)
+        timerAdapter.submitList(timers.toList())
         timerAdapter.notifyDataSetChanged()
     }
 
@@ -54,9 +59,10 @@ class MainActivity : AppCompatActivity(), TimerListener {
     }
 
     override fun delete(id: Int, adapterPosition: Int) {
+        changeTimer(id, null, false)
+        timerAdapter.notifyItemChanged(adapterPosition)
         timers.remove(timers.find { it.id == id })
         timerAdapter.submitList(timers.toList())
-        //timerAdapter.notifyItemRemoved(adapterPosition)
         timerAdapter.notifyDataSetChanged()
     }
 

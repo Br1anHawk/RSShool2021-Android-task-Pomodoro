@@ -36,7 +36,7 @@ class TimerViewHolder(
     private fun initButtonsListeners(timer: Timer) {
         binding.startStopTimerButton.setOnClickListener {
             if (timer.isStarted) {
-                //this.timerClock?.cancel()
+                this.timerClock?.cancel()
                 listener.stop(timer.id, timer.currentMs, adapterPosition)
             } else {
                 listener.start(timer.id)
