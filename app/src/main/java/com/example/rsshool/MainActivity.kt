@@ -1,11 +1,16 @@
 package com.example.rsshool
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), TimerListener {
+class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -38,6 +43,8 @@ class MainActivity : AppCompatActivity(), TimerListener {
             timerAdapter.submitList(timers.toList())
             timerAdapter.notifyItemInserted(timers.size - 1)
         }
+
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
     }
 
     override fun start(id: Int) {
@@ -75,5 +82,20 @@ class MainActivity : AppCompatActivity(), TimerListener {
             }
         //timerAdapter.submitList(timers)
         //timerAdapter.notifyDataSetChanged()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onAppBackgrounded() {
+        val startIntent = Intent(this, ForegroundService::class.java)
+        startIntent.putExtra(COMMAND_ID, COMMAND_START)
+        startIntent.putExtra(STARTED_TIMER_TIME_MS, 1L * 1000 * 60)
+        startService(startIntent)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppForegrounded() {
+        val stopIntent = Intent(this, ForegroundService::class.java)
+        stopIntent.putExtra(COMMAND_ID, COMMAND_STOP)
+        startService(stopIntent)
     }
 }
