@@ -46,7 +46,7 @@ It's fine :dog::fire:. Но хорошая новость в том, что ес
 
 1. Пример Recycler View - [смотри тут](https://ziginsider.github.io/Simple-RecyclerView-StopwatchApp/)
 2. Пример Custom View - [смотри тут](https://ziginsider.github.io/Simple-Custom-View/)
-3. Пример Foreground Service - пока только [репо](https://github.com/ziginsider/Foreground-Service-Demo-Android-App) (описание будет)
+3. Пример Foreground Service - [смотри тут](https://ziginsider.github.io/Foreground-Service/)
 
  
 ## Cross-checking
