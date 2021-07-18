@@ -9,13 +9,15 @@ data class Timer(
     val id: Int,
     var currentMs: Long,
     var isStarted: Boolean,
-    val initMs: Long
+    val initMs: Long,
+    var isAlarm: Boolean
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readLong(),
         parcel.readByte() != 0.toByte(),
-        parcel.readLong()
+        parcel.readLong(),
+        parcel.readByte() != 0.toByte()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -23,6 +25,7 @@ data class Timer(
         parcel.writeLong(currentMs)
         parcel.writeByte(if (isStarted) 1 else 0)
         parcel.writeLong(initMs)
+        parcel.writeByte(if (isStarted) 1 else 0)
     }
 
     override fun describeContents(): Int {

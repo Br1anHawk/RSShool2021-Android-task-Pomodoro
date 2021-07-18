@@ -17,8 +17,12 @@ class TimerViewHolder(
 ): RecyclerView.ViewHolder(binding.root) {
 
     private var timerClock: CountDownTimer? = null
+    private var job: Job? = null
 
     fun bind(timer: Timer) {
+        if (timer.isAlarm) {
+            binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.stop_timer_notification_color)))
+        }
         binding.timerDisplayTextview.text = timer.currentMs.displayTime()
         if (timer.isStarted) {
             startTimer(timer)
@@ -68,6 +72,21 @@ class TimerViewHolder(
         this.timerClock = getCountDownTimer(timer)
         this.timerClock?.start()
 
+        //job?.cancel()
+//        job = job ?: CoroutineScope(Dispatchers.Main).launch {
+//            while (true) {
+//                Log.d("HOLDER timer - ${timer.id}", timer.currentMs.toString())
+//                binding.timerDisplayTextview.text = timer.currentMs.displayTime()
+//                binding.circleProgressBarView.setCurrent(timer.currentMs)
+//                if (timer.isAlarm) {
+//                    binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.stop_timer_notification_color)))
+//                    stopTimer(timer)
+//                    cancel()
+//                }
+//                delay(UNIT_ONE_SECOND)
+//            }
+//        }
+
         binding.blinkingIndicator.isInvisible = false
         (binding.blinkingIndicator.background as? AnimationDrawable)?.start()
     }
@@ -86,7 +105,7 @@ class TimerViewHolder(
 
             override fun onTick(millisUntilFinished: Long) {
                 Log.d("onTick_CountDownTimer", "${timer.currentMs}")
-                timer.currentMs -= interval
+                //timer.currentMs -= interval
                 binding.timerDisplayTextview.text = timer.currentMs.displayTime()
                 binding.circleProgressBarView.setCurrent(timer.currentMs)
             }
@@ -94,8 +113,9 @@ class TimerViewHolder(
             override fun onFinish() {
                 Log.d("onFinish_CountDownTimer", "${timer.currentMs}")
                 binding.timerDisplayTextview.text = timer.initMs.displayTime()
-                timer.isStarted = false
-                timer.currentMs = timer.initMs
+                binding.circleProgressBarView.setCurrent(timer.initMs)
+                //timer.isStarted = false
+                //timer.currentMs = timer.initMs
                 stopTimer(timer)
                 binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.stop_timer_notification_color)))
             }

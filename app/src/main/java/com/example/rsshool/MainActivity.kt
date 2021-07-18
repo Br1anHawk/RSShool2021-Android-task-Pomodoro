@@ -18,6 +18,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     private val timers = mutableListOf<Timer>()
     private var nextId = 0
 
+    private var job: Job? = null
+
     override fun onStart() {
         super.onStart()
         Log.d("OnStart", "onStart")
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             if (timerTime == 0L) {
                 return@setOnClickListener
             }
-            timers.add(Timer(nextId++, timerTime, false, timerTime))
+            timers.add(Timer(nextId++, timerTime, false, timerTime, false))
             timerAdapter.submitList(timers.toList())
             timerAdapter.notifyItemInserted(timers.size - 1)
             //timerAdapter.notifyDataSetChanged()
@@ -125,24 +127,46 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     override fun start(id: Int, adapterPosition: Int) {
         timers.forEach { if (it.isStarted) it.isStarted = false}
-        timerAdapter.submitList(timers.toList())
-        timerAdapter.notifyDataSetChanged()
         changeTimer(id, null, true)
         timerAdapter.submitList(timers.toList())
-        timerAdapter.notifyItemChanged(adapterPosition)
+        timerAdapter.notifyDataSetChanged()
+
+        job?.cancel()
+        job = CoroutineScope(Dispatchers.Main).launch {
+            val timerNullable = timers.find { it.id == id }
+            if (timerNullable == null) cancel()
+            val timer = timerNullable!!
+            while (true) {
+                timer.currentMs -= UNIT_ONE_SECOND
+                Log.d("MAIN timer - $id", timer.currentMs.toString())
+                if (timer.currentMs <= 0L) {
+                    timer.isStarted = false
+                    timer.currentMs = timer.initMs
+                    timer.isAlarm = true
+                    cancel()
+                }
+                delay(UNIT_ONE_SECOND)
+            }
+        }
     }
 
     override fun stop(id: Int, currentMs: Long, adapterPosition: Int) {
         changeTimer(id, currentMs, false)
         timerAdapter.notifyItemChanged(adapterPosition)
+
+        job?.cancel()
     }
 
     override fun reset(id: Int, initMs: Long, adapterPosition: Int) {
+        if (timers.find { it.id == id }?.isStarted == true) job?.cancel()
+
         changeTimer(id, initMs, false)
         timerAdapter.notifyItemChanged(adapterPosition)
     }
 
     override fun delete(id: Int, adapterPosition: Int) {
+        if (timers.find { it.id == id }?.isStarted == true) job?.cancel()
+
         changeTimer(id, null, false)
         timerAdapter.notifyItemChanged(adapterPosition)
         timers.remove(timers.find { it.id == id })
@@ -156,6 +180,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             ?.let {
                 it.currentMs = currentMs ?: it.currentMs
                 it.isStarted = isStarted
+                it.isAlarm = false
             }
     }
 
