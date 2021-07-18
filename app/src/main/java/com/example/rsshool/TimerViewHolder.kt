@@ -8,6 +8,7 @@ import android.util.Log
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rsshool.databinding.TimerItemBinding
+import kotlinx.coroutines.*
 
 class TimerViewHolder(
     private val binding: TimerItemBinding,
@@ -39,7 +40,7 @@ class TimerViewHolder(
                 this.timerClock?.cancel()
                 listener.stop(timer.id, timer.currentMs, adapterPosition)
             } else {
-                listener.start(timer.id)
+                listener.start(timer.id, adapterPosition)
             }
         }
 
@@ -73,7 +74,6 @@ class TimerViewHolder(
 
     private fun stopTimer(timer: Timer) {
         binding.startStopTimerButton.text = resources.getString(R.string.button_timer_start_text)
-
         this.timerClock?.cancel()
 
         binding.blinkingIndicator.isInvisible = true
@@ -123,7 +123,5 @@ class TimerViewHolder(
 
     private companion object {
         private const val START_TIME = "00:00:00"
-        private const val UNIT_TEN_MS = 10L
-        private const val UNIT_ONE_SECOND = 1000L
     }
 }

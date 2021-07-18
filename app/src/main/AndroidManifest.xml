@@ -22,4 +22,6 @@
             android:permission="android.permission.FOREGROUND_SERVICE" />
     </application>
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
 </manifest>

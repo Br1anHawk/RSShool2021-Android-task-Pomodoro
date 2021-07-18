@@ -2,7 +2,7 @@ package com.example.rsshool
 
 interface TimerListener {
 
-    fun start(id: Int)
+    fun start(id: Int, adapterPosition: Int)
 
     fun stop(id: Int, currentMs: Long, adapterPosition: Int)
 
