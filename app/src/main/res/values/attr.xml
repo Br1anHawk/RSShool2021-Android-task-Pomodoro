@@ -2,4 +2,7 @@
     <declare-styleable name="CircleProgressBarView">
         <attr name="colorPrimary" format="color"/>
     </declare-styleable>
+    <declare-styleable name="TimerNotificationAlarmed">
+        <attr name="colorPrimarySurface" format="color"/>
+    </declare-styleable>
 </resources>

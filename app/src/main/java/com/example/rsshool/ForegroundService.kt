@@ -17,8 +17,6 @@ class ForegroundService : Service() {
     private var isServiceStarted = false
     private var notificationManager: NotificationManager? = null
     private var job: Job? = null
-    private var timers: MutableList<Timer> = mutableListOf()
-    //private lateinit var intentToMainActivity: Intent
 
     private val builder by lazy {
         NotificationCompat.Builder(this, CHANNEL_ID)
@@ -27,7 +25,7 @@ class ForegroundService : Service() {
             .setGroupSummary(false)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            //.setContentIntent(getPendingIntent())
+            .setContentIntent(getPendingIntent())
             .setSilent(true)
             .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)
     }
@@ -50,23 +48,16 @@ class ForegroundService : Service() {
     private fun processCommand(intent: Intent?) {
         when (intent?.extras?.getString(COMMAND_ID) ?: INVALID) {
             COMMAND_START -> {
-                val listOfTimers = intent?.extras?.getParcelableArray(LIST_OF_TIMERS)
+                val time = intent?.extras?.getLong(TIMER_CURRENT_MS_TIME)
                     ?: return
-                timers.clear()
-                listOfTimers.forEach { timers.add(it as Timer) }
-                val timer = getRunningTimer() ?: return
-                commandStart(timer)
+                commandStart(time)
             }
             COMMAND_STOP -> commandStop()
             INVALID -> return
         }
     }
 
-    private fun getRunningTimer(): Timer? {
-        return timers.find { it.isStarted }
-    }
-
-    private fun commandStart(timer: Timer) {
+    private fun commandStart(time: Long) {
         if (isServiceStarted) {
             return
         }
@@ -74,25 +65,26 @@ class ForegroundService : Service() {
         try {
             moveToStartedState()
             startForegroundAndShowNotification()
-            continueTimer(timer)
+            continueTimer(time)
         } finally {
             isServiceStarted = true
         }
     }
 
-    private fun continueTimer(timer: Timer) {
+    private fun continueTimer(timerTime: Long) {
+        var time = timerTime
         job = GlobalScope.launch(Dispatchers.Main) {
             while (true) {
-                if (timer.currentMs > 0L) {
-                    timer.currentMs -= INTERVAL
+                if (time > 0L) {
+                    time -= UNIT_ONE_SECOND
                 }
                 notificationManager?.notify(
                     NOTIFICATION_ID,
                     getNotification(
-                        timer.currentMs.displayTime()
+                        time.displayTime()
                     )
                 )
-                delay(INTERVAL)
+                delay(UNIT_ONE_SECOND)
             }
         }
     }
@@ -146,14 +138,6 @@ class ForegroundService : Service() {
     private fun getPendingIntent(): PendingIntent? {
         val intentToMainActivity = Intent(this, MainActivity::class.java)
         intentToMainActivity.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        intentToMainActivity.putExtra(LIST_OF_TIMERS, timers.toTypedArray())
         return PendingIntent.getActivity(this, 0, intentToMainActivity, PendingIntent.FLAG_ONE_SHOT)
-    }
-
-    private companion object {
-
-        private const val CHANNEL_ID = "Channel_ID"
-        private const val NOTIFICATION_ID = 777
-        private const val INTERVAL = 1000L
     }
 }
