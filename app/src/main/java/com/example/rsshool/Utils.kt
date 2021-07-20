@@ -12,6 +12,7 @@ const val UNIT_TEN_MS = 10L
 const val RUNNING_TIMER_ID = "RUNNING_TIMER_ID"
 const val CHANNEL_ID = "Channel_ID"
 const val NOTIFICATION_ID = 777
+const val TIMER_COROUTINE = "TIMER_COROUTINE"
 
 fun Long.displayTime(): String {
     if (this <= 0L) {

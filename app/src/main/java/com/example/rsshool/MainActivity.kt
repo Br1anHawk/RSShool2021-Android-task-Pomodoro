@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.*
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     private var nextId = 0
 
     private var job: Job? = null
+    private val timerCoroutineViewModel by lazy {ViewModelProvider(this).get(TimerCoroutineViewModel::class.java)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +47,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             }
             timers.add(Timer(nextId++, timerTime, false, timerTime, false))
             timerAdapter.submitList(timers.toList())
-            timerAdapter.notifyItemInserted(timers.size - 1)
-            //timerAdapter.notifyDataSetChanged()
+            //timerAdapter.notifyItemInserted(timers.size - 1)
+            timerAdapter.notifyDataSetChanged()
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -60,7 +62,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelableArray(LIST_OF_TIMERS, timers.toTypedArray())
-        job?.cancel()
+        job?.let { timerCoroutineViewModel.saveTimerCoroutine(it) }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -71,11 +73,12 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     private fun initTimersFromBundle(savedInstanceState: Bundle) {
         val arrayTimersFromBundle = savedInstanceState.getParcelableArray(LIST_OF_TIMERS) ?: return
-        val runningTimerId = savedInstanceState.getInt(RUNNING_TIMER_ID)
+        timerCoroutineViewModel.getTimerCoroutine().observe(this, { job ->
+            this.job = job
+        })
         timers.clear()
         for (timer in arrayTimersFromBundle) {
-            if ((timer as Timer).id == runningTimerId) timer.isStarted = true
-            timers.add(timer)
+            timers.add(timer as Timer)
         }
         nextId = if (timers.isNotEmpty()) {
             timers[timers.size - 1].id + 1
@@ -110,6 +113,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                     timer.isStarted = false
                     timer.currentMs = timer.initMs
                     timer.isAlarm = true
+                    timerAdapter.submitList(timers.toList())
+                    timerAdapter.notifyDataSetChanged()
                     cancel()
                 }
                 delay(UNIT_ONE_SECOND)

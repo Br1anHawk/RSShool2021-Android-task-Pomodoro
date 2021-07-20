@@ -27,6 +27,8 @@ class TimerViewHolder(
     fun bind(timer: Timer) {
         if (timer.isAlarm) {
             binding.timerCardview.setCardBackgroundColor(colorNotificationTimerAlarmed)
+        } else {
+            binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.white)))
         }
         binding.timerDisplayTextview.text = timer.currentMs.displayTime()
         if (timer.isStarted) {
@@ -57,7 +59,6 @@ class TimerViewHolder(
             if (timer.isStarted) {
                 this.timerClock?.cancel()
             }
-            binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.white)))
             listener.reset(timer.id, timer.initMs)
         }
 
@@ -70,7 +71,7 @@ class TimerViewHolder(
     }
 
     private fun startTimer(timer: Timer) {
-        binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.white)))
+        //binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.white)))
         binding.startStopTimerButton.text = resources.getString(R.string.button_timer_stop_text)
 
         this.timerClock?.cancel()
@@ -103,7 +104,7 @@ class TimerViewHolder(
                 binding.timerDisplayTextview.text = timer.initMs.displayTime()
                 binding.circleProgressBarView.setCurrent(timer.initMs)
                 stopTimer(timer)
-                binding.timerCardview.setCardBackgroundColor(colorNotificationTimerAlarmed)
+                //binding.timerCardview.setCardBackgroundColor(colorNotificationTimerAlarmed)
             }
         }
     }
