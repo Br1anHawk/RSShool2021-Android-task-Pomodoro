@@ -6,4 +6,7 @@
     <string name="button_timer_stop_text">stop</string>
     <string name="input_text_minutes_hint">minutes</string>
     <string name="input_text_seconds_hint">seconds</string>
+
+    <string name="service_notification_content_title_name">Timer</string>
+    <string name="service_notification_group_name">Timer</string>
 </resources>

@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                 Log.d("MAIN timer - $id", timer.currentMs.toString())
                 if (timer.currentMs <= 0L) {
                     timer.isStarted = false
-                    timer.currentMs = timer.initMs
+                    //timer.currentMs = timer.initMs
                     timer.isAlarm = true
                     timerAdapter.submitList(timers.toList())
                     timerAdapter.notifyDataSetChanged()
@@ -157,9 +157,10 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
+        val runningTimer = timers.find { it.isStarted } ?: return
         val startIntent = Intent(this, ForegroundService::class.java)
         startIntent.putExtra(COMMAND_ID, COMMAND_START)
-        startIntent.putExtra(TIMER_CURRENT_MS_TIME, timers.find { it.isStarted }?.currentMs)
+        startIntent.putExtra(TIMER_CURRENT_MS_TIME, runningTimer.currentMs)
         startService(startIntent)
     }
 

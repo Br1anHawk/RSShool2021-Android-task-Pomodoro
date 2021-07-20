@@ -4,5 +4,6 @@
     </declare-styleable>
     <declare-styleable name="TimerNotificationAlarmed">
         <attr name="colorPrimarySurface" format="color"/>
+        <attr name="colorOnPrimary" format="color"/>
     </declare-styleable>
 </resources>

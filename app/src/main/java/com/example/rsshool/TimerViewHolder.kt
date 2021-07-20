@@ -16,6 +16,13 @@ class TimerViewHolder(
 ): RecyclerView.ViewHolder(binding.root) {
 
     private var timerClock: CountDownTimer? = null
+    private val colorCardviewBackground =
+        binding
+            .root
+            .context
+            .theme
+            .obtainStyledAttributes(null, R.styleable.TimerNotificationAlarmed, 0, 0)
+            .getColorStateList(R.styleable.TimerNotificationAlarmed_colorOnPrimary)
     private val colorNotificationTimerAlarmed =
         binding
             .root
@@ -27,8 +34,10 @@ class TimerViewHolder(
     fun bind(timer: Timer) {
         if (timer.isAlarm) {
             binding.timerCardview.setCardBackgroundColor(colorNotificationTimerAlarmed)
+            binding.startStopTimerButton.isEnabled = false
         } else {
-            binding.timerCardview.setCardBackgroundColor(ColorStateList.valueOf(resources.getColor(R.color.white)))
+            binding.startStopTimerButton.isEnabled = true
+            binding.timerCardview.setCardBackgroundColor(colorCardviewBackground)
         }
         binding.timerDisplayTextview.text = timer.currentMs.displayTime()
         if (timer.isStarted) {
@@ -101,8 +110,9 @@ class TimerViewHolder(
 
             override fun onFinish() {
                 //Log.d("onFinish_CountDownTimer", "${timer.currentMs}")
-                binding.timerDisplayTextview.text = timer.initMs.displayTime()
-                binding.circleProgressBarView.setCurrent(timer.initMs)
+                //binding.timerDisplayTextview.text = timer.initMs.displayTime()
+                //binding.circleProgressBarView.setCurrent(timer.initMs)
+                binding.startStopTimerButton.isEnabled = false
                 stopTimer(timer)
                 //binding.timerCardview.setCardBackgroundColor(colorNotificationTimerAlarmed)
             }
