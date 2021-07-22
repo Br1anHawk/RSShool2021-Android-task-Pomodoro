@@ -1,11 +1,14 @@
 package com.example.rsshool
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.*
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsshool.databinding.ActivityMainBinding
 import kotlinx.coroutines.*
@@ -33,19 +36,11 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
 
         binding.addNewTimerButton.setOnClickListener {
-            var timerTimeInputMinutesText = binding.timerMinutesInputText.text.toString()
-            var timerTimeInputSecondsText = binding.timerSecondsInputText.text.toString()
-            if (timerTimeInputMinutesText.isEmpty()) {
-                timerTimeInputMinutesText = "0"
-            }
-            if (timerTimeInputSecondsText.isEmpty()) {
-                timerTimeInputSecondsText = "0"
-            }
-            val timerTime = timerTimeInputMinutesText.toLong() * 60 * 1000 + timerTimeInputSecondsText.toLong() * 1000
-            if (timerTime == 0L) {
+            val timerTimeMs = initialTimerTimeInput()
+            if (timerTimeMs == 0L) {
                 return@setOnClickListener
             }
-            timers.add(Timer(nextId++, timerTime, false, timerTime, false))
+            timers.add(Timer(nextId++, timerTimeMs, false, timerTimeMs, false))
             timerAdapter.submitList(timers.toList())
             //timerAdapter.notifyItemInserted(timers.size - 1)
             timerAdapter.notifyDataSetChanged()
@@ -57,6 +52,28 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 //                delay(UNIT_TEN_MS)
 //            }
 //        }
+    }
+
+    private fun initialTimerTimeInput(): Long {
+//        var timerTimeInputMinutesText = binding.timerMinutesInputText.text.toString()
+//        var timerTimeInputSecondsText = binding.timerSecondsInputText.text.toString()
+//        if (timerTimeInputMinutesText.isEmpty()) {
+//            timerTimeInputMinutesText = "0"
+//        }
+//        if (timerTimeInputSecondsText.isEmpty()) {
+//            timerTimeInputSecondsText = "0"
+//        }
+//        val timerTime = timerTimeInputMinutesText.toLong() * 60 * 1000 + timerTimeInputSecondsText.toLong() * 1000
+//
+        //binding.numberPickerTimerTimeSeconds.minValue = 0
+        //binding.numberPickerTimerTimeSeconds.maxValue = 59
+
+        val timerTimeMs =
+            binding.numberPickerTimerTimeHours.value.toLong() * 1000 * 3600 +
+            binding.numberPickerTimerTimeMinutes.value.toLong() * 1000 * 60 +
+            binding.numberPickerTimerTimeSeconds.value.toLong() * 1000
+
+        return timerTimeMs
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -87,6 +104,24 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
         timerAdapter.submitList(timers.toList())
         timerAdapter.notifyDataSetChanged()
+    }
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this).apply {
+            setTitle(getString(R.string.alert_dialog_text_confirmation))
+            setMessage(getString(R.string.alert_dialog_text_question))
+
+
+            setPositiveButton(getString(R.string.alert_dialog_text_yes)) { _, _ ->
+                super.onBackPressed()
+            }
+
+            setNegativeButton(getString(R.string.alert_dialog_text_no)){_, _ ->
+//                Toast.makeText(this@MainActivity, "Thank you",
+//                    Toast.LENGTH_LONG).show()
+            }
+            setCancelable(true)
+        }.create().show()
     }
 
     override fun onDestroy() {

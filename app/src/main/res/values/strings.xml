@@ -1,11 +1,19 @@
 <resources>
     <string name="app_name">Pomodoro</string>
-    <string name="button_add_timer">Add Timer</string>
+    <string name="button_add_timer">+</string>
     <string name="textview_timer_text">00:00:00</string>
     <string name="button_timer_start_text">start</string>
     <string name="button_timer_stop_text">stop</string>
     <string name="input_text_minutes_hint">minutes</string>
     <string name="input_text_seconds_hint">seconds</string>
+    <string name="label_hours">hours</string>
+    <string name="label_minutes">minutes</string>
+    <string name="label_seconds">seconds</string>
+
+    <string name="alert_dialog_text_confirmation">Conformation</string>
+    <string name="alert_dialog_text_question">Are you sure you want to exit the app Pomodoro?</string>
+    <string name="alert_dialog_text_no">No</string>
+    <string name="alert_dialog_text_yes">Yes</string>
 
     <string name="service_notification_content_title_name">Timer</string>
     <string name="service_notification_group_name">Timer</string>
