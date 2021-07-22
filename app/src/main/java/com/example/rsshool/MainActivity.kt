@@ -1,12 +1,9 @@
 package com.example.rsshool
 
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -140,9 +137,11 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
         job?.cancel()
         job = CoroutineScope(Dispatchers.Main).launch {
-            val timerNullable = timers.find { it.id == id }
-            if (timerNullable == null) cancel()
-            val timer = timerNullable!!
+            val timer = timers.find { it.id == id }
+            if (timer == null) {
+                cancel()
+                return@launch
+            }
             timer.currentMs += UNIT_ONE_SECOND
             while (true) {
                 timer.currentMs -= UNIT_ONE_SECOND
