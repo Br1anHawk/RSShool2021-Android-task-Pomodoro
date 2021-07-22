@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
     private var job: Job? = null
     private val timerCoroutineViewModel by lazy {ViewModelProvider(this).get(TimerCoroutineViewModel::class.java)}
 
+    private var isExitFromApp = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -113,6 +115,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
 
             setPositiveButton(getString(R.string.alert_dialog_text_yes)) { _, _ ->
+                isExitFromApp = true
                 super.onBackPressed()
             }
 
@@ -192,6 +195,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
+        if (isExitFromApp) return
         val runningTimer = timers.find { it.isStarted } ?: return
         val startIntent = Intent(this, ForegroundService::class.java)
         startIntent.putExtra(COMMAND_ID, COMMAND_START)
