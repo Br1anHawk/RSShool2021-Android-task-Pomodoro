@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.annotation.AttrRes
 
@@ -14,6 +15,7 @@ class CircleProgressBarView @JvmOverloads constructor(
     @AttrRes defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
+    private val correctionTime = UNIT_ONE_SECOND
     private var periodMs = 0L
     private var currentMs = 0L
     private var color = 0
@@ -37,9 +39,10 @@ class CircleProgressBarView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (periodMs == 0L || currentMs <= 0L || currentMs >= periodMs) return
+        if (periodMs == 0L || currentMs < 0L || currentMs == periodMs) return
         val startAngel = 360 - (((currentMs % periodMs).toFloat() / periodMs) * 360)
-
+        //Log.d("Custom view - angel", startAngel.toString())
+        Log.d("Custom view - currentMs", currentMs.toString())
         canvas.drawArc(
             0f,
             0f,

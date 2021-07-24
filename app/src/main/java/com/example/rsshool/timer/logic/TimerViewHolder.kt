@@ -3,12 +3,12 @@ package com.example.rsshool.timer.logic
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
-import com.example.rsshool.R
-import com.example.rsshool.UNIT_ONE_SECOND
+import com.example.rsshool.*
 import com.example.rsshool.databinding.TimerItemBinding
-import com.example.rsshool.displayTime
+import kotlinx.coroutines.*
 
 
 class TimerViewHolder(
@@ -18,6 +18,8 @@ class TimerViewHolder(
 ): RecyclerView.ViewHolder(binding.root) {
 
     private var timerClock: CountDownTimer? = null
+    private var job: Job? = null
+
     private val colorCardviewBackground =
         binding
             .root
@@ -60,6 +62,7 @@ class TimerViewHolder(
         binding.startStopTimerButton.setOnClickListener {
             if (timer.isStarted) {
                 this.timerClock?.cancel()
+                job?.cancel()
                 listener.stop(timer.id, timer.currentMs, adapterPosition)
             } else {
                 listener.start(timer.id)
@@ -69,6 +72,7 @@ class TimerViewHolder(
         binding.restartButton.setOnClickListener {
             if (timer.isStarted) {
                 this.timerClock?.cancel()
+                job?.cancel()
             }
             listener.reset(timer.id, timer.initMs, adapterPosition)
         }
@@ -76,6 +80,7 @@ class TimerViewHolder(
         binding.deleteButton.setOnClickListener {
             if (timer.isStarted) {
                 this.timerClock?.cancel()
+                job?.cancel()
             }
             listener.delete(timer.id)
         }
@@ -86,7 +91,15 @@ class TimerViewHolder(
         binding.startStopTimerButton.text = resources.getString(R.string.button_timer_stop_text)
 
         this.timerClock?.cancel()
-        this.timerClock = getCountDownTimer(timer)
+        //this.timerClock = getCountDownTimer(timer)
+        job?.cancel()
+        job = CoroutineScope(Dispatchers.Main).launch {
+            while (timer.currentMs > 0L) {
+                binding.timerDisplayTextview.text = timer.currentMs.displayTime()
+                binding.circleProgressBarView.setCurrent(timer.currentMs)
+                delay(UNIT_TEN_MS)
+            }
+        }
         this.timerClock?.start()
 
         binding.blinkingIndicator.isInvisible = false
@@ -96,16 +109,17 @@ class TimerViewHolder(
     private fun stopTimer(timer: Timer) {
         binding.startStopTimerButton.text = resources.getString(R.string.button_timer_start_text)
         this.timerClock?.cancel()
-
+        job?.cancel()
         binding.blinkingIndicator.isInvisible = true
         (binding.blinkingIndicator.background as? AnimationDrawable)?.stop()
     }
 
     private fun getCountDownTimer(timer: Timer): CountDownTimer {
-        return object : CountDownTimer(timer.currentMs, UNIT_ONE_SECOND) {
+        return object : CountDownTimer(timer.initMs, UNIT_ONE_HUNDRED_MS) {
 
             override fun onTick(millisUntilFinished: Long) {
-                //Log.d("onTick_CountDownTimer", "${timer.currentMs}")
+                Log.d("CDT_currentMs", "${timer.currentMs}")
+                Log.d("CDT_untilFinish", millisUntilFinished.toString())
                 binding.timerDisplayTextview.text = timer.currentMs.displayTime()
                 binding.circleProgressBarView.setCurrent(timer.currentMs)
             }

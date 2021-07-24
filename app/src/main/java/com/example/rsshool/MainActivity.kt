@@ -3,6 +3,7 @@ package com.example.rsshool
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -135,10 +136,10 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                 cancel()
                 return@launch
             }
-            timer.currentMs += UNIT_ONE_SECOND
+            //timer.currentMs += UNIT_ONE_SECOND
             while (true) {
-                timer.currentMs -= UNIT_ONE_SECOND
-                //Log.d("MAIN timer - $id", timer.currentMs.toString())
+                timer.currentMs -= UNIT_TEN_MS
+                Log.d("MAIN timer - $id", timer.currentMs.toString())
                 if (timer.currentMs <= 0L) {
                     timer.isStarted = false
                     timer.isAlarm = true
@@ -146,7 +147,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                     timerAdapter.notifyDataSetChanged()
                     cancel()
                 }
-                delay(UNIT_ONE_SECOND)
+                delay(UNIT_TEN_MS)
             }
         }
     }
