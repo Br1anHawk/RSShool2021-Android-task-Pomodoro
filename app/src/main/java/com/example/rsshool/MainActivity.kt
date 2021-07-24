@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             }
             timers.add(Timer(nextId++, timerTimeMs, false, timerTimeMs, false))
             timerAdapter.submitList(timers.toList())
-            timerAdapter.notifyDataSetChanged()
+            //timerAdapter.notifyDataSetChanged()
             //timerAdapter.notifyItemInserted(timers.size - 1)
         }
 
@@ -180,7 +180,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
         timers.remove(timer)
         timerAdapter.submitList(timers.toList())
-        timerAdapter.notifyDataSetChanged()
+        //timerAdapter.notifyDataSetChanged()
     }
 
     private fun changeTimer(id: Int, currentMs: Long?, isStarted: Boolean) {
