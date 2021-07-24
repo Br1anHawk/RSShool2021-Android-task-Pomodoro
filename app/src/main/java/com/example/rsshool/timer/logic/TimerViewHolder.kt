@@ -60,7 +60,7 @@ class TimerViewHolder(
         binding.startStopTimerButton.setOnClickListener {
             if (timer.isStarted) {
                 this.timerClock?.cancel()
-                listener.stop(timer.id, timer.currentMs)
+                listener.stop(timer.id, timer.currentMs, adapterPosition)
             } else {
                 listener.start(timer.id)
             }
@@ -70,7 +70,7 @@ class TimerViewHolder(
             if (timer.isStarted) {
                 this.timerClock?.cancel()
             }
-            listener.reset(timer.id, timer.initMs)
+            listener.reset(timer.id, timer.initMs, adapterPosition)
         }
 
         binding.deleteButton.setOnClickListener {

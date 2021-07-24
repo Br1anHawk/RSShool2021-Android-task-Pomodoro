@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             }
             timers.add(Timer(nextId++, timerTimeMs, false, timerTimeMs, false))
             timerAdapter.submitList(timers.toList())
-            timerAdapter.notifyDataSetChanged()
+            //timerAdapter.notifyDataSetChanged()
+            timerAdapter.notifyItemInserted(timers.size - 1)
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -150,21 +151,26 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
         }
     }
 
-    override fun stop(id: Int, currentMs: Long) {
+    override fun stop(id: Int, currentMs: Long, adapterItemId: Int) {
         changeTimer(id, currentMs, false)
-        timerAdapter.notifyDataSetChanged()
+        //timerAdapter.notifyDataSetChanged()
+        timerAdapter.notifyItemChanged(adapterItemId)
         job?.cancel()
     }
 
-    override fun reset(id: Int, initMs: Long) {
+    override fun reset(id: Int, initMs: Long, adapterItemId: Int) {
         if (timers.find { it.id == id }?.isStarted == true) job?.cancel()
         changeTimer(id, initMs, false)
-        timerAdapter.notifyDataSetChanged()
+        //timerAdapter.notifyDataSetChanged()
+        timerAdapter.notifyItemChanged(adapterItemId)
     }
 
     override fun delete(id: Int) {
         val timer = timers.find { it.id == id }
-        if (timer?.isStarted == true) job?.cancel()
+        if (timer?.isStarted == true) {
+            timer.isStarted = false
+            job?.cancel()
+        }
         timers.remove(timer)
         timerAdapter.submitList(timers.toList())
         timerAdapter.notifyDataSetChanged()
@@ -178,6 +184,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                 it.isStarted = isStarted
                 it.isAlarm = false
             }
+        //timerAdapter.submitList(timers.toList())
+        //timerAdapter.notifyDataSetChanged()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

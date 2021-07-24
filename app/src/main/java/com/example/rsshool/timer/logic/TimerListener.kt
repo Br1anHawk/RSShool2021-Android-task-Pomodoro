@@ -4,9 +4,9 @@ interface TimerListener {
 
     fun start(id: Int)
 
-    fun stop(id: Int, currentMs: Long)
+    fun stop(id: Int, currentMs: Long, adapterItemId: Int)
 
-    fun reset(id: Int, initMs: Long)
+    fun reset(id: Int, initMs: Long, adapterItemId: Int)
 
     fun delete(id: Int)
 }
