@@ -131,6 +131,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
         job?.cancel()
         job = CoroutineScope(Dispatchers.Main).launch {
+            var currentTime = System.currentTimeMillis()
             val timer = timers.find { it.id == id }
             if (timer == null) {
                 cancel()
@@ -138,7 +139,9 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             }
             //timer.currentMs += UNIT_ONE_SECOND
             while (true) {
-                timer.currentMs -= UNIT_TEN_MS
+                timer.currentMs -= System.currentTimeMillis() - currentTime
+                currentTime = System.currentTimeMillis()
+                //timer.currentMs -= UNIT_TEN_MS
                 Log.d("MAIN timer - $id", timer.currentMs.toString())
                 if (timer.currentMs <= 0L) {
                     timer.isStarted = false
