@@ -1,12 +1,14 @@
-package com.example.rsshool
+package com.example.rsshool.timer.logic
 
-import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.drawable.AnimationDrawable
 import android.os.CountDownTimer
 import androidx.core.view.isInvisible
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rsshool.R
+import com.example.rsshool.UNIT_ONE_SECOND
 import com.example.rsshool.databinding.TimerItemBinding
+import com.example.rsshool.displayTime
 
 
 class TimerViewHolder(

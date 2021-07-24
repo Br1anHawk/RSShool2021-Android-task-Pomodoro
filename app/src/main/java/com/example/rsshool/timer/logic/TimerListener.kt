@@ -1,4 +1,4 @@
-package com.example.rsshool
+package com.example.rsshool.timer.logic
 
 interface TimerListener {
 

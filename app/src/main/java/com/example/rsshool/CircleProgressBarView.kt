@@ -37,7 +37,7 @@ class CircleProgressBarView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (periodMs == 0L || currentMs <= 0L || currentMs == periodMs) return
+        if (periodMs == 0L || currentMs <= 0L || currentMs >= periodMs) return
         val startAngel = 360 - (((currentMs % periodMs).toFloat() / periodMs) * 360)
 
         canvas.drawArc(

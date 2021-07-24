@@ -1,9 +1,7 @@
-package com.example.rsshool
+package com.example.rsshool.timer.logic
 
 import android.os.Parcel
 import android.os.Parcelable
-import android.util.Log
-import kotlinx.coroutines.*
 
 data class Timer(
     val id: Int,

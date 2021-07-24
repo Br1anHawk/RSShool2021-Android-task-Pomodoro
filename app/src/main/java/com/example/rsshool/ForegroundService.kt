@@ -6,6 +6,9 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -18,6 +21,8 @@ class ForegroundService : Service() {
     private var notificationManager: NotificationManager? = null
     private var job: Job? = null
 
+    private var ringtone: Ringtone? = null
+
     private val builder by lazy {
         NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.service_notification_content_title_name))
@@ -27,13 +32,16 @@ class ForegroundService : Service() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(getPendingIntent())
             .setSilent(true)
-            .setSmallIcon(R.drawable.ic_baseline_access_alarm_24)
+            .setSmallIcon(R.drawable.blinking_tomato_indicator)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher_app_foreground))
     }
 
     override fun onCreate() {
         super.onCreate()
         notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+        ringtone =
+            RingtoneManager.getRingtone(applicationContext, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -75,7 +83,10 @@ class ForegroundService : Service() {
         var time = timerTime
         job = GlobalScope.launch(Dispatchers.Main) {
             while (true) {
-                if (time > 0L) {
+                if (time <= 0L) {
+                    ringtone?.play()
+                    break
+                } else {
                     time -= UNIT_ONE_SECOND
                 }
                 notificationManager?.notify(

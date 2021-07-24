@@ -1,4 +1,4 @@
-package com.example.rsshool
+package com.example.rsshool.timer.logic
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
