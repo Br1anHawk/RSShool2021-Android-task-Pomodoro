@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
             }
             timers.add(Timer(nextId++, timerTimeMs, false, timerTimeMs, false))
             timerAdapter.submitList(timers.toList())
-            //timerAdapter.notifyDataSetChanged()
-            timerAdapter.notifyItemInserted(timers.size - 1)
+            timerAdapter.notifyDataSetChanged()
+            //timerAdapter.notifyItemInserted(timers.size - 1)
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -59,7 +59,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        timerCoroutineViewModel.saveTimersList(timers.toList())
+        //timerCoroutineViewModel.saveTimersList(timers.toList())
+        outState.putParcelableArray(LIST_OF_TIMERS, timers.toTypedArray())
         job?.let { timerCoroutineViewModel.saveTimerCoroutine(it) }
         timerCoroutineViewModel.saveTimerInput(
             arrayOf(
@@ -72,21 +73,20 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        initTimersFromBundle()
+        initTimersFromBundle(savedInstanceState)
     }
 
-    private fun initTimersFromBundle() {
+    private fun initTimersFromBundle(savedInstanceState: Bundle) {
         timers.clear()
         timerCoroutineViewModel.getTimersList().observe(this, { timers ->
             timers.forEach { this.timers.add(it) }
         })
+        savedInstanceState.getParcelableArray(LIST_OF_TIMERS)?.forEach { timers.add(it as Timer) }
         nextId = if (timers.isNotEmpty()) {
             timers[timers.size - 1].id + 1
         } else {
             0
         }
-        timerAdapter.submitList(timers.toList())
-        timerAdapter.notifyDataSetChanged()
         timerCoroutineViewModel.getTimerCoroutine().observe(this, { job ->
             this.job = job
         })
@@ -97,6 +97,8 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                 numberPickerTimerTimeSeconds.value = timerInput[2]
             }
         })
+        timerAdapter.submitList(timers.toList())
+        timerAdapter.notifyDataSetChanged()
     }
 
     override fun onBackPressed() {

@@ -10,7 +10,6 @@
         android:theme="@style/Theme.RSShool2021AndroidtaskPomodoro">
         <activity
             android:name="com.example.rsshool.MainActivity"
-            android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
