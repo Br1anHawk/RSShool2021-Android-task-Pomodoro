@@ -42,7 +42,7 @@ class CircleProgressBarView @JvmOverloads constructor(
         if (periodMs == 0L || currentMs < 0L || currentMs == periodMs) return
         val startAngel = 360 - (((currentMs % periodMs).toFloat() / periodMs) * 360)
         //Log.d("Custom view - angel", startAngel.toString())
-        Log.d("Custom view - currentMs", currentMs.toString())
+        //Log.d("Custom view - currentMs", currentMs.toString())
         canvas.drawArc(
             0f,
             0f,

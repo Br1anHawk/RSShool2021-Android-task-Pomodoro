@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), TimerListener, LifecycleObserver {
                 timer.currentMs -= System.currentTimeMillis() - currentTime
                 currentTime = System.currentTimeMillis()
                 //timer.currentMs -= UNIT_TEN_MS
-                Log.d("MAIN timer - $id", timer.currentMs.toString())
+                //Log.d("MAIN timer - $id", timer.currentMs.toString())
                 if (timer.currentMs <= 0L) {
                     timer.isStarted = false
                     timer.isAlarm = true
