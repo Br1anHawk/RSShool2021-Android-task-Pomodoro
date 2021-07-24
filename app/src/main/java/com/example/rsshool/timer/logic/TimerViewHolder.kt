@@ -99,6 +99,9 @@ class TimerViewHolder(
                 binding.circleProgressBarView.setCurrent(timer.currentMs)
                 delay(UNIT_TEN_MS)
             }
+            binding.timerCardview.setCardBackgroundColor(colorNotificationTimerAlarmed)
+            binding.startStopTimerButton.isEnabled = false
+            stopTimer(timer)
         }
         this.timerClock?.start()
 
