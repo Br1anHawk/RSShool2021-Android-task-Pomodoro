@@ -2,4 +2,8 @@
 <resources>
     <dimen name="custom_progress_bar_view_width">40dp</dimen>
     <dimen name="custom_progress_bar_view_height">40dp</dimen>
+    <dimen name="custom_progress_bar_view_timer_stroke_width">2dp</dimen>
+    <dimen name="custom_progress_bar_view_timer_line_separator_stroke_width">1dp</dimen>
+    <dimen name="custom_progress_bar_view_timer_line_separator_length">4dp</dimen>
+    <dimen name="custom_progress_bar_view_arrow_half_width">5dp</dimen>
 </resources>

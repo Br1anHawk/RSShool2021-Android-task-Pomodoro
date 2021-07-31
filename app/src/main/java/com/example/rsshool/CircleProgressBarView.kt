@@ -44,7 +44,7 @@ class CircleProgressBarView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        //drawTimerClockView(canvas, 0f)
+        drawTimerClockView(canvas, 0f)
         if (currentMs < 0L) currentMs = 0L
         if (periodMs == 0L || currentMs == periodMs) return
         val startAngel = 360 - (((currentMs % periodMs).toFloat() / periodMs) * 360)
@@ -66,33 +66,56 @@ class CircleProgressBarView @JvmOverloads constructor(
     private fun drawTimerClockView(canvas: Canvas, angleRotation: Float) {
         val centerX = width.toFloat() / 2
         val centerY = height.toFloat() / 2
+
         val paintTimer = Paint()
         paintTimer.color = Color.BLACK
         paintTimer.style = Paint.Style.STROKE
-        paintTimer.strokeWidth = 6f
+        paintTimer.strokeWidth = resources.getDimension(R.dimen.custom_progress_bar_view_timer_stroke_width)
         canvas.drawOval(
             RectF(
-                0f,
-                0f,
-                width.toFloat(),
-                height.toFloat()
+                paintTimer.strokeWidth,
+                paintTimer.strokeWidth,
+                width.toFloat() - paintTimer.strokeWidth,
+                height.toFloat() - paintTimer.strokeWidth
             ),
             paintTimer
         )
+
+        val paintLineSeparators = Paint()
+        paintLineSeparators.color = Color.BLACK
+        paintLineSeparators.style = Paint.Style.STROKE
+        paintLineSeparators.strokeWidth = resources.getDimension(R.dimen.custom_progress_bar_view_timer_line_separator_stroke_width)
+        val lineSeparatorLength = resources.getDimension(R.dimen.custom_progress_bar_view_timer_line_separator_length)
+        val pathLineSeparator = Path()
+        pathLineSeparator.moveTo(centerX, 0f)
+        pathLineSeparator.lineTo(centerX, lineSeparatorLength)
+        val matrix = Matrix()
+        val angleLinesSeparator = 30f
+        for (i in 0..360 / angleLinesSeparator.toInt()) {
+            matrix.setRotate(angleLinesSeparator, centerX, centerY)
+            pathLineSeparator.transform(matrix)
+            canvas.drawPath(pathLineSeparator, paintLineSeparators)
+        }
+
         val paintTimerArrow = Paint()
         paintTimerArrow.color = Color.BLACK
         paintTimerArrow.style = Paint.Style.FILL
+        val arrowHalfWidth = resources.getDimension(R.dimen.custom_progress_bar_view_arrow_half_width)
         val pathArrow = Path()
         pathArrow.moveTo(centerX, 0f)
-        pathArrow.lineTo(centerX - 5f, centerY)
-        pathArrow.lineTo(centerX + 5f, centerY)
-        pathArrow.moveTo(centerX - 5f, centerY)
-        pathArrow.lineTo(centerX + 5f, centerY)
-        val matrix = Matrix()
+        pathArrow.lineTo(centerX - arrowHalfWidth, centerY)
+        pathArrow.lineTo(centerX + arrowHalfWidth, centerY)
+        pathArrow.moveTo(centerX - arrowHalfWidth, centerY)
+        pathArrow.lineTo(centerX + arrowHalfWidth, centerY)
+        //val matrix = Matrix()
         matrix.setRotate(angleRotation, centerX, centerY)
         pathArrow.transform(matrix)
         canvas.drawPath(pathArrow, paintTimerArrow)
-        canvas.drawCircle(centerX, centerY, 5f, paintTimerArrow)
+        canvas.drawCircle(centerX, centerY, arrowHalfWidth, paintTimerArrow)
+        val paintTimerArrowCenterCircle = Paint()
+        paintTimerArrowCenterCircle.color = Color.WHITE
+        paintTimerArrowCenterCircle.style = Paint.Style.FILL
+        canvas.drawCircle(centerX, centerY, arrowHalfWidth / 2, paintTimerArrowCenterCircle)
     }
 
     /**
