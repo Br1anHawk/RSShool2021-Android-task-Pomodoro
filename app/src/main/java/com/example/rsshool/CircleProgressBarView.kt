@@ -73,10 +73,10 @@ class CircleProgressBarView @JvmOverloads constructor(
         paintTimer.strokeWidth = resources.getDimension(R.dimen.custom_progress_bar_view_timer_stroke_width)
         canvas.drawOval(
             RectF(
-                paintTimer.strokeWidth,
-                paintTimer.strokeWidth,
-                width.toFloat() - paintTimer.strokeWidth,
-                height.toFloat() - paintTimer.strokeWidth
+                paintTimer.strokeWidth / 2,
+                paintTimer.strokeWidth / 2,
+                width.toFloat() - paintTimer.strokeWidth / 2,
+                height.toFloat() - paintTimer.strokeWidth / 2
             ),
             paintTimer
         )
