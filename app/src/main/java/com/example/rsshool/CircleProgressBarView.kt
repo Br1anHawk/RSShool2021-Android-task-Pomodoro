@@ -1,11 +1,8 @@
 package com.example.rsshool
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
+import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import androidx.annotation.AttrRes
 
@@ -15,7 +12,6 @@ class CircleProgressBarView @JvmOverloads constructor(
     @AttrRes defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private val correctionTime = UNIT_ONE_SECOND
     private var periodMs = 0L
     private var currentMs = 0L
     private var color = 0
@@ -37,8 +33,18 @@ class CircleProgressBarView @JvmOverloads constructor(
         paint.style = Paint.Style.FILL
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val widthView = resources.getDimension(R.dimen.custom_progress_bar_view_width)
+        val heightView = resources.getDimension(R.dimen.custom_progress_bar_view_height)
+        setMeasuredDimension(widthView.toInt(), heightView.toInt())
+    }
+
+
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        //drawTimerClockView(canvas, 0f)
         if (currentMs < 0L) currentMs = 0L
         if (periodMs == 0L || currentMs == periodMs) return
         val startAngel = 360 - (((currentMs % periodMs).toFloat() / periodMs) * 360)
@@ -54,6 +60,39 @@ class CircleProgressBarView @JvmOverloads constructor(
             true,
             paint
         )
+        drawTimerClockView(canvas, startAngel)
+    }
+
+    private fun drawTimerClockView(canvas: Canvas, angleRotation: Float) {
+        val centerX = width.toFloat() / 2
+        val centerY = height.toFloat() / 2
+        val paintTimer = Paint()
+        paintTimer.color = Color.BLACK
+        paintTimer.style = Paint.Style.STROKE
+        paintTimer.strokeWidth = 6f
+        canvas.drawOval(
+            RectF(
+                0f,
+                0f,
+                width.toFloat(),
+                height.toFloat()
+            ),
+            paintTimer
+        )
+        val paintTimerArrow = Paint()
+        paintTimerArrow.color = Color.BLACK
+        paintTimerArrow.style = Paint.Style.FILL
+        val pathArrow = Path()
+        pathArrow.moveTo(centerX, 0f)
+        pathArrow.lineTo(centerX - 5f, centerY)
+        pathArrow.lineTo(centerX + 5f, centerY)
+        pathArrow.moveTo(centerX - 5f, centerY)
+        pathArrow.lineTo(centerX + 5f, centerY)
+        val matrix = Matrix()
+        matrix.setRotate(angleRotation, centerX, centerY)
+        pathArrow.transform(matrix)
+        canvas.drawPath(pathArrow, paintTimerArrow)
+        canvas.drawCircle(centerX, centerY, 5f, paintTimerArrow)
     }
 
     /**
